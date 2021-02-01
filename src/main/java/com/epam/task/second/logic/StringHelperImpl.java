@@ -1,55 +1,65 @@
 package com.epam.task.second.logic;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+import org.apache.log4j.Logger;
 
-public class StringHelperImpl implements StringHelper {
+import java.util.regex.Pattern;
 
+
+public class StringHelperImpl implements StringAndCharacterHelper {
+
+    private final static Logger LOGGER = Logger.getLogger(StringHelperImpl.class);
 
 
     private static final String REG_EX1 = "[\\s\\.\\!\\,]";
     private static final String REG_EX2 = "\\b[a-zA-Z]{5}\\b";
 
-    public String changeCharacter(String requiredStr) {
 
-        LOGGER.info("Method changeCharacter started");
+    public String changeCharacter(String requiredStr, int numberOldSymbol, char newSymbol) {
 
-            int symbol = 3;
-            String temp;
-            String[] words = requiredStr.split(REG_EX1);
-            for (int i = 0; i < words.length; i++) {
-                if (symbol < words[i].length()) {
-                    temp = "";
-                    temp += words[i].substring(0, symbol - 1);
-                    temp += '@';
-                    temp += words[i].substring(symbol);
-                    words[i] = temp;
-                }
+        String temp;
+        String[] words = requiredStr.split(REG_EX1);
+        for (int i = 0; i < words.length; i++) {
+            if (numberOldSymbol < words[i].length()) {
+                temp = "";
+                temp += words[i].substring(0, numberOldSymbol - 1);
+                temp += newSymbol;
+                temp += words[i].substring(numberOldSymbol);
+                words[i] = temp;
             }
-            StringBuilder builder = new StringBuilder();
-            for(int i = 0; i < words.length; i++) {
-                builder.append(words[i]);
-                if (i != words.length- 1){
-                    builder.append(" ");
-                }
+        }
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            builder.append(words[i]);
+            if (i != words.length - 1) {
+                builder.append(" ");
             }
-            requiredStr = builder.toString();
-
-        LOGGER.info("Method changeCharacter finished");
-
+        }
+        requiredStr = builder.toString();
         return requiredStr;
+    }
+
+    public String replace(String oldSentence, char letterTochange, char falseLetter, char trueLetter) {
+
+        String upperLetterP = Character.toString(letterTochange).toUpperCase();
+        StringBuilder builder1 = new StringBuilder();
+        StringBuilder builder2 = new StringBuilder();
+        StringBuilder builder3 = new StringBuilder();
+        StringBuilder builder4 = new StringBuilder();
+
+
+        return oldSentence.replace(
+                builder1.append(upperLetterP).append(falseLetter),
+                builder2.append(upperLetterP).append(trueLetter)
+            )
+            .replace(
+                builder3.append(letterTochange).append(falseLetter),
+                builder4.append(letterTochange).append(trueLetter)
+            );
 
     }
 
-    public String replace(String text) {
+    public String replaceSentence(String oldSentence, int wordLength, String newSentence) {
 
-        return text.replace("Pa", "Po").replace("pa", "po");
-
-    }
-
-    public String replaceSentence(String sentence) {
-
-        String name = "GOT";
-
-        return sentence.replaceAll(REG_EX2, name);
+        return oldSentence.replaceAll(String.valueOf("\\b[a-zA-Z]{" + wordLength + "}\\b"), newSentence);
     }
 }
